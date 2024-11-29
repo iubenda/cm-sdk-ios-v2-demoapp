@@ -22,13 +22,13 @@ class CMPManager {
         guard cmpManager == nil else { return }
         
         let cmpConfig: CmpConfig = CmpConfig.shared.setup(
-            withId: "Your Code-ID goes here",  // TODO: replace this with the 13 character Code-ID from your CMP
+            withId: "YOUR CODE-ID GOES HERE",  // TODO: replace this by your Code-ID
             domain: "delivery.consentmanager.net",
             appName: "CMPSDKv2DemoApp",
-            language: "EN")
+            language: "DE")
         
         cmpConfig.logLevel = CmpLogLevel.verbose
-        cmpConfig.isAutomaticATTRequest = true
+        cmpConfig.isAutomaticATTRequest = false
         
         let manager = CMPConsentTool(cmpConfig: cmpConfig)
             .withErrorListener(handleError)
@@ -56,6 +56,7 @@ class CMPManager {
     private func handleOpen() {
         isConsentLayerVisible = true
         print("CMP Opened")
+        NotificationCenter.default.post(name: .cmpOpened, object: nil)
     }
     
     private func handleNotOpened() {
@@ -71,4 +72,5 @@ class CMPManager {
 // Notification extension
 extension Notification.Name {
     static let cmpClosed = Notification.Name("CMPClosedNotification")
+    static let cmpOpened = Notification.Name("CMPOpenedNotification")  // Add this line
 }

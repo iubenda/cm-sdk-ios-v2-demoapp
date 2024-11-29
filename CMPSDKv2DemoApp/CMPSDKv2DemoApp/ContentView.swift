@@ -11,7 +11,8 @@ import Combine
 
 struct ContentView: View {
     @StateObject private var viewModel = ContentViewModel()
-    
+    @EnvironmentObject var lifecycleManager: AppLifecycleManager
+
     var body: some View {
         ZStack {
             if viewModel.showConsentControls {
@@ -24,31 +25,29 @@ struct ContentView: View {
                 ConsentWebView()
             }
         }
+        .onChange(of: lifecycleManager.canInitializeCMP) { canInitialize in
+            if canInitialize {
+                viewModel.initializeCMP()
+            }
+        }
     }
 }
 
 class ContentViewModel: ObservableObject {
     @Published var showConsentControls = false
-    @Published var showConsentWebView = true
+    @Published var showConsentWebView = false
     
-    private var cancellables = Set<AnyCancellable>()
-
     init() {
         setupNotifications()
-        setupBindings()
-        initializeCMP()
     }
     
-    private func setupBindings() {
-        // Observe CMPManager's isConsentLayerVisible property
-        CMPManager.shared.$isConsentLayerVisible
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isVisible in
-                self?.showConsentWebView = isVisible
-            }
-            .store(in: &cancellables)
+    func initializeCMP() {
+        CMPManager.shared.initialize()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.showConsentControls = true
+        }
     }
-
+    
     private func setupNotifications() {
         NotificationCenter.default.addObserver(
             self,
@@ -56,11 +55,18 @@ class ContentViewModel: ObservableObject {
             name: .cmpClosed,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleCMPOpened),
+            name: .cmpOpened,  // You'll need to add this notification name
+            object: nil
+        )
     }
     
-    private func initializeCMP() {
-        CMPManager.shared.initialize()
-        self.showConsentControls = true
+    @objc private func handleCMPOpened() {
+        DispatchQueue.main.async {
+            self.showConsentWebView = true
+        }
     }
 
     @objc private func handleCMPClosed() {
@@ -71,6 +77,5 @@ class ContentViewModel: ObservableObject {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        cancellables.removeAll()
     }
 }
