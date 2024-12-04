@@ -8,10 +8,10 @@
 import Foundation
 import CmpSdk
 
-class CMPManager {
-    static let shared = CMPManager()
+class CMPSDKManager {
+    static let shared = CMPSDKManager()
     
-    private(set) var cmpManager: CMPConsentTool?
+    private(set) var cmpManager: CmpManager?
     private var isInitialized = false
     @Published private(set) var isConsentLayerVisible = false
 
@@ -22,7 +22,7 @@ class CMPManager {
         guard cmpManager == nil else { return }
         
         let cmpConfig: CmpConfig = CmpConfig.shared.setup(
-            withId: "YOUR CODE-ID GOES HERE",  // TODO: replace this by your Code-ID
+            withId: "YOUR-CODE-ID-GOES-HERE",  // TODO: replace this by your Code-ID (13 characters)
             domain: "delivery.consentmanager.net",
             appName: "CMPSDKv2DemoApp",
             language: "DE")
@@ -30,7 +30,7 @@ class CMPManager {
         cmpConfig.logLevel = CmpLogLevel.verbose
         cmpConfig.isAutomaticATTRequest = false
         
-        let manager = CMPConsentTool(cmpConfig: cmpConfig)
+        let manager = CmpManager(cmpConfig: cmpConfig)
             .withErrorListener(handleError)
             .withCloseListener(handleClose)
             .withOpenListener(handleOpen)

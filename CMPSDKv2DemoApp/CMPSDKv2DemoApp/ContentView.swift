@@ -42,7 +42,7 @@ class ContentViewModel: ObservableObject {
     }
     
     func initializeCMP() {
-        CMPManager.shared.initialize()
+        CMPSDKManager.shared.initialize()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             self?.showConsentControls = true
         }

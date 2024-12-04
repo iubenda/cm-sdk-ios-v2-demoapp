@@ -42,93 +42,93 @@ struct ConsentButtons: View {
     var body: some View {
         VStack(spacing: 12) {
             ConsentButton(title: "Has User Choice?", color: .blue) {
-                let hasConsent = CMPManager.shared.cmpManager?.hasConsent()
+                let hasConsent = CMPSDKManager.shared.cmpManager?.hasConsent()
                 showToast("Has User Choice: \(String(describing: hasConsent))")
             }
             
             ConsentButton(title: "Get CMP String", color: .teal) {
-                let cmpString = CMPManager.shared.cmpManager?.getConsentString()
+                let cmpString = CMPSDKManager.shared.cmpManager?.getConsentString()
                 showToast("CMP String: \(String(describing: cmpString))")
             }
             
             ConsentButton(title: "Get All Purposes", color: .mint) {
-                let purposes = CMPManager.shared.cmpManager?.getAllPurposes()
+                let purposes = CMPSDKManager.shared.cmpManager?.getAllPurposes()
                 showToast("Purposes: \(String(describing: purposes))")
             }
             
             ConsentButton(title: "Has Purpose ID c53?", color: .mint) {
-                let hasPurpose = CMPManager.shared.cmpManager?.hasPurposeConsent("c53")
+                let hasPurpose = CMPSDKManager.shared.cmpManager?.hasPurpose("c53", defaultReturn: false)
                 showToast("Has Purpose c53: \(String(describing: hasPurpose))")
             }
             
             ConsentButton(title: "Get Enabled Purposes", color: .mint) {
-                let enabled = CMPManager.shared.cmpManager?.getEnabledPurposes()
+                let enabled = CMPSDKManager.shared.cmpManager?.getEnabledPurposes()
                 showToast("Enabled Purposes: \(String(describing: enabled))")
             }
             
             ConsentButton(title: "Get Disabled Purposes", color: .gray) {
-                let disabled = CMPManager.shared.cmpManager?.getDisabledPurposes()
+                let disabled = CMPSDKManager.shared.cmpManager?.getDisabledPurposes()
                 showToast("Disabled Purposes: \(String(describing: disabled))")
             }
             
             ConsentButton(title: "Enable Purposes c52 and c53", color: .mint) {
-                CMPManager.shared.cmpManager?.enablePurposeList(["c52", "c53"])
+                CMPSDKManager.shared.cmpManager?.enablePurposeList(["c52", "c53"])
                 showToast("Purposes c52 and c53 enabled.")
             }
             
             ConsentButton(title: "Disable Purposes c52 and c53", color: .red) {
-                CMPManager.shared.cmpManager?.disablePurposeList(["c52", "c53"])
+                CMPSDKManager.shared.cmpManager?.disablePurposeList(["c52", "c53"])
                 showToast("Purposes c52 and c53 disabled")
             }
             
             ConsentButton(title: "Get All Vendors", color: .cyan) {
-                let vendors = CMPManager.shared.cmpManager?.getAllVendors()
+                let vendors = CMPSDKManager.shared.cmpManager?.getAllVendors()
                 showToast("All Vendors: \(String(describing: vendors))")
             }
             
             ConsentButton(title: "Has Vendor ID s2789?", color: .cyan) {
-                let hasVendor = CMPManager.shared.cmpManager?.hasVendorConsent("s2789")
+                let hasVendor = CMPSDKManager.shared.cmpManager?.hasVendor("s2789", defaultReturn: false)
                 showToast("Has Vendor s2789: \(String(describing: hasVendor))")
             }
             
             ConsentButton(title: "Get Enabled Vendors", color: .cyan) {
-                let enabled = CMPManager.shared.cmpManager?.getEnabledVendors()
+                let enabled = CMPSDKManager.shared.cmpManager?.getEnabledVendors()
                 showToast("Enabled Vendors: \(String(describing: enabled))")
             }
             
             ConsentButton(title: "Get Disabled Vendors", color: .gray) {
-                let disabled = CMPManager.shared.cmpManager?.getDisabledVendors()
+                let disabled = CMPSDKManager.shared.cmpManager?.getDisabledVendors()
                 showToast("Disabled Vendors: \(String(describing: disabled))")
             }
             
             ConsentButton(title: "Enable Vendors s2790 and s2791", color: .cyan) {
-                CMPManager.shared.cmpManager?.enableVendorList(["s2790", "s2791"])
+                CMPSDKManager.shared.cmpManager?.enableVendorList(["s2790", "s2791"])
                 showToast("Vendors s2790 and s2791 enabled")
             }
             
             ConsentButton(title: "Disable Vendors s2790 and s2791", color: .red) {
-                CMPManager.shared.cmpManager?.disableVendorList(["s2790", "s2791"])
+                CMPSDKManager.shared.cmpManager?.disableVendorList(["s2790", "s2791"])
                 showToast("Vendors s2790 and s2791 disabled")
             }
             
             ConsentButton(title: "Reject All", color: .red) {
-                CMPManager.shared.cmpManager?.rejectAll {
+                CMPSDKManager.shared.cmpManager?.rejectAll {
                     showToast("All consents rejected")
                 }
             }
             
             ConsentButton(title: "Accept All", color: .green) {
-                CMPManager.shared.cmpManager?.acceptAll {
+                CMPSDKManager.shared.cmpManager?.acceptAll {
                     showToast("All consents accepted")
                 }
             }
             
             ConsentButton(title: "Check and Open Consent Layer", color: .indigo) {
-                CMPManager.shared.cmpManager?.checkAndOpenConsentLayer()
+                CMPSDKManager.shared.cmpManager?.openConsentLayerOnCheck()
             }
             
             ConsentButton(title: "Open Consent Layer", color: .indigo) {
-                CMPManager.shared.cmpManager?.openView()
+                CMPSDKManager.shared.cmpManager?.openConsentLayer()
             }
             
             ConsentButton(title: "Import CMP String", color: .mint) {
@@ -140,7 +140,7 @@ struct ConsentButtons: View {
     
     private func importConsentString(_ cmpString: String, showToast: @escaping (String) -> Void) {
         Task {
-            if let result = await CMPManager.shared.cmpManager?.importCmpString(cmpString) {
+            if let result = await CMPSDKManager.shared.cmpManager?.importCmpString(cmpString) {
                 let (success, error) = result
                 await MainActor.run {
                     if success {
